@@ -20,6 +20,7 @@ use tower_http::cors::{CorsLayer,Any};
  async fn Find(ConnectInfo(x):ConnectInfo<SocketAddr>)->String
  {
    let ip=x.ip().to_string();
+   println!("{}",ip);
    let api_key=env::var("api_key").unwrap();
 
    let url=format!("https://api.ipdata.co/{ip}?api-key={api_key}&fields=ip,is_eu,city,region,region_code,country_name,country_code,continent_name,continent_code,latitude,longitude,postal,calling_code,flag,emoji_flag,emoji_unicode");
