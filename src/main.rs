@@ -1,5 +1,6 @@
 use axum::{
-    extract::ConnectInfo, routing::{get,post}, Router
+    extract::ConnectInfo, routing::{get,post}, Router,
+    http::HeaderMap
 };
 use std::net::SocketAddr;
 use reqwest::{
@@ -17,10 +18,10 @@ use tower_http::cors::{CorsLayer,Any};
     let listener=tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener,app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
  }
- async fn Find(ConnectInfo(x):ConnectInfo<SocketAddr>)->String
+ async fn Find(ConnectInfo(x):ConnectInfo<SocketAddr>,header:HeaderMap)->String
  {
-   let ip=x.ip().to_string();
-   println!("{}",ip);
+   let ip=header.get("x-forwarded-for").unwrap().to_str().unwrap().to_string();
+   println!("{:?}",ip);
    let api_key=env::var("api_key").unwrap();
 
    let url=format!("https://api.ipdata.co/{ip}?api-key={api_key}&fields=ip,is_eu,city,region,region_code,country_name,country_code,continent_name,continent_code,latitude,longitude,postal,calling_code,flag,emoji_flag,emoji_unicode");
@@ -28,5 +29,5 @@ use tower_http::cors::{CorsLayer,Any};
    let resp=Client::new().get(url).send().await.unwrap().text().await.unwrap();
    println!("{:?}",resp);
 
-  "Asdf".to_string()
+       ip
  }
