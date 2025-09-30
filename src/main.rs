@@ -38,7 +38,7 @@ use tower_http::cors::{CorsLayer,Any};
    println!("{:?}",resp);
 
 
-       ip.to_string()
+       resp.to_string()
  }
 
  //splitting 
