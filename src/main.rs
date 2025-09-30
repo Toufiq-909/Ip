@@ -20,8 +20,16 @@ use tower_http::cors::{CorsLayer,Any};
  }
  async fn Find(ConnectInfo(x):ConnectInfo<SocketAddr>,header:HeaderMap)->String
  {
-   let ip=header.get("x-forwarded-for").unwrap().to_str().unwrap().to_string();
+   let ips=header.get("x-forwarded-for").unwrap().to_str().unwrap().to_string();
+    let total=ips.split(",");
+    let mut ip="";
+    for i in total{
+        ip=i;
+        break;
+    }
+
    println!("{:?}",ip);
+
    let api_key=env::var("api_key").unwrap();
 
    let url=format!("https://api.ipdata.co/{ip}?api-key={api_key}&fields=ip,is_eu,city,region,region_code,country_name,country_code,continent_name,continent_code,latitude,longitude,postal,calling_code,flag,emoji_flag,emoji_unicode");
@@ -29,5 +37,10 @@ use tower_http::cors::{CorsLayer,Any};
    let resp=Client::new().get(url).send().await.unwrap().text().await.unwrap();
    println!("{:?}",resp);
 
-       ip
+
+       ip.to_string()
  }
+
+ //splitting 
+ //x forwerd for
+ //reverse proxry
