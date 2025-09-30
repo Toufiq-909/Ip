@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP Fetch Example</title>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      
+     <style>
+        #map { height: 80vh; }
+     </style>
 </head>
 <body>
     <h1>Fetch IP Info</h1>
     <button id="fetchBtn">Get IP Info</button>
     <pre id="output"></pre>
-
+     <div id="map"></div>
+     <p id="1"></p>
+     <p id="2"></p>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin="">
+   
+    </script>
     <script>
         const button = document.getElementById('fetchBtn');
         const output = document.getElementById('output');
@@ -21,12 +35,31 @@
                 const response = await fetch('https://ip-1-rhk7.onrender.com/getip');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
-                const data = await response.text(); // since your Axum endpoint returns a String
-                output.textContent = data;
+                const data = await response.json(); // since your Axum endpoint returns a String
+                document.getElementById("1").innerText=data.latitude;
+                document.getElementById("2").innerText=data.longitude;
+                output.textContent=data.ip;
+                console.log(document.getElementById("1").innerText+" ");
+                console.log(document.getElementById("2").innerText+" ");
+                let lat=parseFloat(document.getElementById("1").innerText);
+        let long=parseFloat(document.getElementById("2").innerText);
+          let map = L.map('map').setView([lat,long], 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+var marker = L.marker([lat,long]).addTo(map);
+marker.bindPopup("<b>You are here</b>").openPopup();
+     console.log("Sai ram")
             } catch (err) {
                 output.textContent = `Error: ${err}`;
             }
         });
     </script>
+
+  
+  
+
 </body>
 </html>
